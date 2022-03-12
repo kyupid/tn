@@ -4,5 +4,10 @@ import lombok.Getter;
 
 @Getter
 public class AuthMember {
-    String ci;
+    // 부가적인 데이터들
+    // ...
+    // ...
+
+    // 필요한 정보
+    String encryptedInfo;
 }

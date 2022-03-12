@@ -1,6 +1,6 @@
-package com.yeonwook.tn.repository;
+package com.kyu.tn.repository;
 
-import com.yeonwook.tn.entity.Member;
+import com.kyu.tn.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

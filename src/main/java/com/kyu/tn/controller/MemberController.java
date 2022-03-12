@@ -1,7 +1,7 @@
-package com.yeonwook.tn.controller;
+package com.kyu.tn.controller;
 
-import com.yeonwook.tn.dto.AuthMember;
-import com.yeonwook.tn.service.MemberService;
+import com.kyu.tn.dto.AuthMember;
+import com.kyu.tn.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

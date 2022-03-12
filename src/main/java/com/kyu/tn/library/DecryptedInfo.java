@@ -1,4 +1,4 @@
-package com.yeonwook.tn.library;
+package com.kyu.tn.library;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

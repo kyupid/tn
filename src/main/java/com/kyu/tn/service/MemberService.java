@@ -1,8 +1,8 @@
-package com.yeonwook.tn.service;
+package com.kyu.tn.service;
 
-import com.yeonwook.tn.dto.AuthMember;
-import com.yeonwook.tn.library.DecryptModuleExample;
-import com.yeonwook.tn.repository.MemberRepository;
+import com.kyu.tn.dto.AuthMember;
+import com.kyu.tn.library.DecryptModuleExample;
+import com.kyu.tn.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -1,4 +1,4 @@
-package com.yeonwook.tn.dto;
+package com.kyu.tn.dto;
 
 import lombok.Getter;
 

@@ -1,4 +1,4 @@
-package com.yeonwook.tn.entity;
+package com.kyu.tn.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;

@@ -1,4 +1,4 @@
-package com.yeonwook.entity;
+package com.yeonwook.tn.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

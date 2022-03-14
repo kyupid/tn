@@ -9,5 +9,5 @@ public class AuthMember {
     // ...
 
     // 필요한 정보
-    String encryptedInfo;
+    private String encryptedInfo;
 }

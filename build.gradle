@@ -29,6 +29,9 @@ dependencies {
 
     // 타임리프
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+    // mockito test static method
+    testImplementation 'org.mockito:mockito-inline:3.6.0'
 }
 
 tasks.named('test') {

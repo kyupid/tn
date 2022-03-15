@@ -49,21 +49,37 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("CI를 가지고있는 멤버가 있는 경우")
-    void verifyMemberEmailIfPresent() {
-        String resultEmail = "test@test.com";
+    void verifyMemberWithCI() {
+        String email = "test@test.com";
 
         //when
         when(authMember.getEncryptedInfo()).thenReturn("");
         when(DecryptModuleExample.decrypt(anyString())).thenReturn(decryptedInfo);
         when(decryptedInfo.getCi()).thenReturn("");
-        when(memberRepository.findEmail(anyString())).thenReturn(Optional.of(resultEmail));
+        when(memberRepository.findEmail(anyString())).thenReturn(Optional.of(email));
+
+        //given
+        String resultEmail = memberService.getEmailIfPresent(authMember);
+
+        //then
+        verify(memberRepository, times(1)).findEmail(anyString());
+        assertThat(resultEmail).isEqualTo(email);
+    }
+
+    @Test
+    @DisplayName("CI가 가지고 있는 멤버가 없는 경우")
+    void verifyMemberWithoutCI() {
+        //when
+        when(authMember.getEncryptedInfo()).thenReturn("");
+        when(DecryptModuleExample.decrypt(anyString())).thenReturn(decryptedInfo);
+        when(decryptedInfo.getCi()).thenReturn("");
+        when(memberRepository.findEmail(anyString())).thenReturn(Optional.empty());
 
         //given
         String email = memberService.getEmailIfPresent(authMember);
 
         //then
         verify(memberRepository, times(1)).findEmail(anyString());
-        assertThat(email).isEqualTo(resultEmail);
+        assertThat(email).isEqualTo(null);
     }
-
 }

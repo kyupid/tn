@@ -19,7 +19,7 @@
 > - 사용자는 회원가입을 해야만 서비스를 이용할 수 있다.
 > - 회원가입의 로직은 다음과 같다.
     >    - 회원가입 버튼을 클릭한다.
->    - 본인인증을 위한 휴대폰 인증 모듈 페이지가 호출된다.
+    >    - 본인인증을 위한 휴대폰 인증 모듈 페이지가 호출된다.
 >    - 본인인증을 마치면 암호화된 사용자 정보를 얻는다.
 >    - 복호화하여 CI값(간단히 사용자 구별을위한 unique key 값)으로 기가입된 회원인지 체크한다.
 >    - 기가입된 회원/미가입된 회원 구분에 따른 후처리(View)
@@ -97,7 +97,7 @@ public class DecryptModuleExample {
         // ...
         // 복호화 로직에 의해 생성된 객체
         DecryptedInfo decryptedInfo = new DecryptedInfo();
-        
+
         return decryptedInfo;
     }
 }
@@ -274,8 +274,62 @@ class MemberServiceTest {
 }
 ```
 
-테스트 코드를 작성하니 위에서 수동 테스트를 위해서 더하거나 뺐던 모든 코드들이 불필요해진다. 이로인해 얻는 이점은 어마무시하다.
+테스트 코드를 작성하니 위에서 수동 테스트를 위해서 더하거나 뺐던 모든 코드들이 불필요해진다. 뿐만아니라 이로인해 얻는 이점이 정말 많다.
 
-예를들어
+변경점이 생기면 이때까지 테스트 했던 기능에 어떤 영향을 끼칠지 모른다. 바로 코드에 대한 자신감 하락으로 이어진다.
 
+테스트 코드를 작성해놓으면 기능변경에 바로 대처할수있다. 변경하고 전체 테스트를 돌려보면 통과여부만 체크하면 되기때문이다.
 
+```java
+@RequiredArgsConstructor
+@Service
+public class MemberService {
+
+    private final MemberRepository memberRepository;
+
+    public String getMemberEmailIfPresent(AuthMember authMember) {
+
+        // 휴대폰인증 테스트 불가로 encryptedInfo 가 임의의 값으로 들어가야함
+        String encryptedInfo = authMember.getEncryptedInfo();
+
+        // 임의의 값이 들어가기 때문에
+        // 인증 모듈 회사의 알고리즘으로 이루어진 DecryptModuleExample 도 사용할 수 없는 상태
+        final String CI = DecryptModuleExample.decrypt(encryptedInfo).getCi();
+        String email = memberRepository.findEmail(CI)
+                .orElse(null);
+
+        // ExistingMember 의 값을 체크해서 그 값을 "이미 존재하는 회원 페이지" 로 넘겨주거나 "회원가입 페이지" 로 넘김
+        return email;
+    }
+}
+```
+
+예를 들어서 해당코드에서 Repository에서 이메일이 아니라 Member를 꺼내는 방향으로 변경했다고 생각해보자.
+
+```java
+    // ...생략
+    // String email = memberRepository.findEmail(CI).orElse(null);
+    Member member = memberRepository.findByCI(CI).orElse(Member.emptyMember());
+return member;
+}
+```
+
+`String email = memberRepository.findEmail(CI).orElse(null);` 이 아니라 객체를 반환해서 뷰로 보내기로 했다고 생각해보자. 해당 서비스 코드에서는 해당 부분과 연관된 컨트롤러만 변경하면 되지만
+예를 들어, 회원가입 페이지에서는 해당 member 값으로 뷰를 처리하는데 개발자가 이것을 알아차리지 못했다면 회원가입페이지 코드를 건들이는 날까지 모르고 넘어가는 것이다.
+
+이런 크고 작은 것들이 쌓인다면 프로그램은 버그덩어리가 될것이다. 테스트 코드를 작성하며 이를 사전에 예방할 수 있는것이다. 테스트코드를 작성하며 들인 시간과 수고가 오히려 프로그램 품질을 올려주고 결과적으로 시간을 절약해준다.
+
+또한 이러한 장점은 테스트 코드가 곧 기능들에 대한 문서역할도 할수있다. 아무리 메소드나 변수 네이밍을 잘해도 해당 기능에 대한 역할을 한번에 파악하기란 쉽지않다. 왜냐면 이름으로부터 단편적으로 기능에 대한 의미를 추론할 수 있을 뿐이지 구체적으로 어떤 역할을 하는지 파악하려면 결국 코드를 봐야하기 때문이다.
+
+```java
+public String getMemberEmailIfPresent(AuthMember authMember)
+```
+```java
+@DisplayName("CI를 가지고있는 멤버가 있는 경우 테스트")
+void test1(){}
+
+@DisplayName("CI를 가지고있는 멤버가 없는 경우 테스트")
+void test2(){}
+```
+
+또한 이렇게 테스트 코드를 작성해주며 여러 조건을 주며 의도하는 테스트를 하기 때문에 그에 따라 의도하는 기능에 대해 명명해줘야하기 때문에 메소드명만으로는 되지 않던 게 테스트코드 작성한것이 문서가 될 수 있는것이다.
